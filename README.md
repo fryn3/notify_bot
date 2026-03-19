@@ -125,6 +125,112 @@ curl -X POST localhost:8000/notify \
 | `details`  | `string[]` | `[]`         | Список деталей                   |
 | `duration` | `string`   | —            | Длительность выполнения          |
 
+## Примеры с пайпами
+
+При пайпе `ntfy` по умолчанию берёт последние 5 строк вывода и оборачивает в code block (MarkdownV2). Флаги-модификаторы:
+
+- `-n 10` — количество строк (по умолчанию 5)
+- `--header "текст"` — заголовок над code block
+- `--raw` — отправить весь вывод как plain text, без code block
+- `--md` — отправить весь вывод как MarkdownV2
+
+> Многие инструменты (`make`, `pytest`, `docker build`) пишут в stderr — используй `2>&1`, чтобы захватить весь вывод.
+
+### Сборка и деплой
+
+```bash
+qb build 2>&1 | ntfy --header "qb build"
+make build 2>&1 | ntfy --header "make build"
+docker build . 2>&1 | ntfy -n 3
+make deploy 2>&1 | ntfy --header "deploy"
+```
+
+### Тесты
+
+```bash
+pytest 2>&1 | ntfy --header "pytest"
+pytest 2>&1 | ntfy --raw              # полный вывод, без code block
+pytest 2>&1 | ntfy -n 15              # последние 15 строк
+go test ./... 2>&1 | ntfy --header "go test"
+```
+
+### Логи и мониторинг
+
+```bash
+docker logs app --tail 50 | ntfy --header "docker logs"
+journalctl -u myservice -n 20 | ntfy
+kubectl logs deploy/api --tail 30 | ntfy --header "k8s api"
+```
+
+### Произвольные команды
+
+```bash
+df -h | ntfy --header "disk usage"
+git log --oneline -5 | ntfy --header "git log"
+curl -s https://example.com/health | ntfy --header "healthcheck"
+```
+
+## Интеграция с Claude Code
+
+[Claude Code](https://claude.com/claude-code) поддерживает хуки — shell-команды, которые запускаются на определённых этапах работы. С `ntfy` можно получать Telegram-уведомления, когда Claude завершает задачу.
+
+### Хуки
+
+Добавь хук `Stop` в `.claude/settings.json` (на уровне проекта) или `~/.claude/settings.json` (глобально):
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ntfy 'Claude Code: задача завершена'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Вариант со структурированным отчётом:
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ntfy --report --title 'Claude Code' --status success --summary 'Задача завершена'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Использование в скриптах
+
+```bash
+# Уведомление после завершения задачи
+claude -p "Refactor auth module" && ntfy "Claude: готово" || ntfy "Claude: ошибка"
+
+# Вывод Claude в Telegram
+claude -p "Run all tests" 2>&1 | ntfy --header "Claude Code"
+
+# Отчёт по результату
+claude -p "Fix the bug in parser" && \
+  ntfy --report --title "Claude Code" --status success --summary "Баг исправлен" || \
+  ntfy --report --title "Claude Code" --status failure --summary "Не удалось исправить"
+```
+
 ## Конфигурация
 
 Через переменные окружения или файл `.env`:
