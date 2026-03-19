@@ -15,7 +15,7 @@ dp = Dispatcher()
 
 
 async def main() -> None:
-    log.info("Starting notify-bot (API on %s:%s)", API_HOST, API_PORT)
+    log.info("Starting ntfy (API on %s:%s)", API_HOST, API_PORT)
 
     config = uvicorn.Config(
         fastapi_app,

@@ -1,10 +1,10 @@
-# notify-bot
+# ntfy
 
 Минимальный Telegram-бот для отправки уведомлений. Принимает сообщения через HTTP API и CLI, отправляет в личные сообщения.
 
 ## Возможности
 
-- **CLI** — команда `notify-bot` для скриптов и пайплайнов (работает без сервера)
+- **CLI** — команда `ntfy` для скриптов и пайплайнов (работает без сервера)
 - **HTTP API** — `POST /notify` для интеграции с сервисами
 - **Простые уведомления** — текстовые сообщения ("сборка завершена")
 - **Markdown** — форматированные сообщения (MarkdownV2)
@@ -32,33 +32,33 @@ pip install -e .
 
 ### 3. Использование CLI
 
-Команда `notify-bot` отправляет уведомления напрямую через Telegram API — сервер не нужен.
+Команда `ntfy` отправляет уведомления напрямую через Telegram API — сервер не нужен.
 
 ```bash
 # Простой текст
-notify-bot "Build completed"
+ntfy "Build completed"
 
 # Чтение из stdin
-echo "Deploy finished" | notify-bot -
+echo "Deploy finished" | ntfy -
 
 # Markdown
-notify-bot --md "**Build** _passed_ on \`main\`"
+ntfy --md "**Build** _passed_ on \`main\`"
 
 # Структурированный отчёт
-notify-bot --report --title "Agent Run" --status success \
+ntfy --report --title "Agent Run" --status success \
   --summary "Refactored auth" \
   --detail "Removed 3 endpoints" \
   --detail "Added JWT refresh" \
   --duration "4m 32s"
 
 # Отчёт из JSON (stdin)
-echo '{"title":"Agent Run","status":"success","summary":"Done"}' | notify-bot --report-json
+echo '{"title":"Agent Run","status":"success","summary":"Done"}' | ntfy --report-json
 ```
 
 ### 4. Запуск сервера (опционально)
 
 ```bash
-notify-bot-server
+ntfy-server
 ```
 
 Стартует HTTP API на `0.0.0.0:8000` и Telegram bot polling.

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Standalone CLI for sending Telegram notifications via notify-bot.
+"""Standalone CLI for sending Telegram notifications via ntfy.
 
 Calls Telegram API directly — no server dependency.
 
 Usage:
-    notify-bot "Build completed"
-    notify-bot --md "**Build** _passed_ on `main`"
-    notify-bot --report --title "Agent Run" --status success --summary "Refactored auth"
-    echo "Deploy finished" | notify-bot --raw
-    history | notify-bot
-    history | notify-bot --header history
-    docker logs app | notify-bot -n 10
+    ntfy "Build completed"
+    ntfy --md "**Build** _passed_ on `main`"
+    ntfy --report --title "Agent Run" --status success --summary "Refactored auth"
+    echo "Deploy finished" | ntfy --raw
+    history | ntfy
+    history | ntfy --header history
+    docker logs app | ntfy -n 10
 """
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def _format_report(title: str, status: str, summary: str, details: list[str], du
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        prog="notify-bot",
+        prog="ntfy",
         description="Send Telegram notifications",
     )
     parser.add_argument("message", nargs="?", help="Message text (use '-' to read from stdin)")

@@ -9,7 +9,7 @@ from pydantic import BaseModel, model_validator
 from notify_bot.bot import send_notification
 from notify_bot.formatting import format_report
 
-app = FastAPI(title="notify-bot", version="0.1.0")
+app = FastAPI(title="ntfy", version="0.1.0")
 
 
 class Report(BaseModel):

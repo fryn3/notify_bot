@@ -1,5 +1,5 @@
 [project]
-name = "notify-bot"
+name = "ntfy"
 version = "0.1.0"
 description = "Minimal Telegram notification bot with HTTP API and CLI"
 requires-python = ">=3.11"
@@ -13,11 +13,12 @@ dependencies = [
 ]
 
 [project.scripts]
-notify-bot = "notify_cli:main"
-notify-bot-server = "notify_bot.main:run"
+ntfy = "notify_cli:main"
+ntfy-server = "notify_bot.main:run"
 
 [tool.setuptools]
 py-modules = ["notify_cli"]
+packages = ["notify_bot"]
 
 [build-system]
 requires = ["setuptools>=68.0"]
